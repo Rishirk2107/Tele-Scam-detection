@@ -17,7 +17,6 @@ channels = ['summa121']
 # Create a TelegramClient instance for the bot
 client = TelegramClient('bot_session', api_id, api_hash).start(bot_token=bot_token)
 
-
 @client.on(events.NewMessage(chats=channels))  # This listens to messages from multiple channels
 async def message_handler(event):
     # Get the message text
@@ -38,17 +37,23 @@ async def message_handler(event):
         sender_id = sender.id
         sender_type = "Channel"
 
-    # Print sender details
-    print(f"Message: {message}")
-    print(f"Sender Name: {sender_name}")
-    print(f"Sender Username: @{sender_username}")
-    print(f"Sender ID: {sender_id}")
-    print(f"Sender Type: {sender_type}")
-    print(f"Channel: {event.chat.title}")  # Show the channel name
-    print("Spam reports")
-    print(spam_report(message))
+    # Generate spam report
+    report = spam_report(message)
 
-    # Add your custom logic here (e.g., logging, responding, etc.)
+    # Prepare the spam report message
+    response_message = (
+        f"\ud83d\udd12 **Spam Report** \ud83d\udd12\n\n"
+        f"**Message:** {message}\n"
+        f"**Sender Name:** {sender_name}\n"
+        f"**Sender Username:** @{sender_username}\n"
+        f"**Sender ID:** {sender_id}\n"
+        f"**Sender Type:** {sender_type}\n"
+        f"**Channel:** {event.chat.title}\n\n"
+        f"**Spam Analysis:** {report}"
+    )
+
+    # Send the report back to the channel
+    await client.send_message(event.chat_id, response_message)
 
 # Start the client asynchronously
 print("Bot is running...")
