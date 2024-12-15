@@ -15,7 +15,7 @@ api_hash = os.getenv('API_HASH')
 phone_number = os.getenv('PHONE_NUMBER')  # Add your phone number here
 
 # Channel list
-channels = ['summa121','hahahascambot']
+channels = ['summa121','hahahascambot','the_trading_advisor_stock','tradelikebarlin','nifty_50_stockspro','Intraday_Banknifty_Calls','Account_handel','mehtaisbackofficial_0','UshasAnalysis0','account_handling_stock','stockpro_online']
 
 # Create a TelegramClient instance for the user account (not a bot)
 client = TelegramClient('user_session', api_id, api_hash)
@@ -60,7 +60,7 @@ async def message_handler(event):
         f"**Channel id:** {channel_id}"
         
     )
-    
+    report['message']=message
     report["channel_id"]=channel_id
     report["username"]=sender_username
     
