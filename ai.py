@@ -7,11 +7,10 @@ import os
 load_dotenv()
 
 # Retrieve the API key from the environment variable
-api_key = os.getenv("GEMINI_API_KEY")
-print(api_key)
+groq_api_key = os.getenv("GROQ_API_KEY")
 
-# Define the Gemini API endpoint
-gemini_api_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={api_key}"
+# Define the Groq API endpoint
+groq_api_url = "https://api.groq.com/openai/v1/chat/completions"
 
 def spam_report(message):
     # Define the prompt for scam detection
@@ -30,29 +29,30 @@ def spam_report(message):
 
     # Create the request payload
     payload = {
-        "contents": [
-            {
-                "parts": [{"text": prompt}]
-            }
-        ]
+        "messages": [{"role": "user", "content": prompt}],
+        "model": "llama-3.3-70b-versatile"
     }
 
     # Set up the headers for the API request
     headers = {
+        "Authorization": f"Bearer {groq_api_key}",
         "Content-Type": "application/json"
     }
 
-    # Send the request to the Gemini API
-    response = requests.post(gemini_api_url, headers=headers, json=payload)
+    # Send the request to the Groq API
+    response = requests.post(groq_api_url, headers=headers, json=payload)
 
     # Check if the request was successful
     if response.status_code == 200:
         # Parse the response JSON
         response_json = response.json()
 
-        # Extract the response text, which contains the JSON string
-        response_text = response_json['candidates'][0]['content']['parts'][0]['text']
-        response_text=response_text[7:-4]
+        # Extract the response content
+        response_text = response_json['choices'][0]['message']['content']
+
+        # Remove markdown code block formatting
+        if response_text.startswith("```json") and response_text.endswith("```"):
+            response_text = response_text[7:-3].strip()  # Strip out "```json" at the start and "```" at the end
 
         # Try to parse the response text as JSON
         try:
@@ -60,6 +60,7 @@ def spam_report(message):
             return structured_response
         except json.JSONDecodeError:
             print("The response text is not in valid JSON format.")
+            print("Response Text:", response_text)  # Print the response for debugging
             return None
     else:
         print(f"Error: {response.status_code} - {response.text}")

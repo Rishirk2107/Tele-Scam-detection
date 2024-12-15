@@ -9,13 +9,13 @@ load_dotenv()
 # Retrieve credentials from environment variables
 api_id = int(os.getenv('API_ID'))  # Ensure the ID is an integer
 api_hash = os.getenv('API_HASH')
-bot_token = os.getenv('BOT_TOKEN')
+phone_number = os.getenv('PHONE_NUMBER')  # Add your phone number here
 
 # Channel list
-channels = ['summa121']
+channels = ['summa121','hahahascambot']
 
-# Create a TelegramClient instance for the bot
-client = TelegramClient('bot_session', api_id, api_hash).start(bot_token=bot_token)
+# Create a TelegramClient instance for the user account (not a bot)
+client = TelegramClient('user_session', api_id, api_hash)
 
 @client.on(events.NewMessage(chats=channels))  # This listens to messages from multiple channels
 async def message_handler(event):
@@ -39,25 +39,29 @@ async def message_handler(event):
 
     # Generate spam report
     report = spam_report(message)
+    print(report)
 
     # Prepare the spam report message
-    response_message = (
-        f"\ud83d\udd12 **Spam Report** \ud83d\udd12\n\n"
-        f"**Message:** {message}\n"
-        f"**Sender Name:** {sender_name}\n"
-        f"**Sender Username:** @{sender_username}\n"
-        f"**Sender ID:** {sender_id}\n"
-        f"**Sender Type:** {sender_type}\n"
-        f"**Channel:** {event.chat.title}\n\n"
-        f"**Spam Analysis:** {report}"
-    )
+    # response_message = (
+    #     f"\ud83d\udd12 **Spam Report** \ud83d\udd12\n\n"
+    #     f"**Message:** {message}\n"
+    #     f"**Sender Name:** {sender_name}\n"
+    #     f"**Sender Username:** @{sender_username}\n"
+    #     f"**Sender ID:** {sender_id}\n"
+    #     f"**Sender Type:** {sender_type}\n"
+    #     f"**Channel:** {event.chat.title}\n\n"
+    #     f"**Spam Analysis:** {report}"
+    # )
 
-    # Send the report back to the channel
-    await client.send_message(event.chat_id, response_message)
+    # # Send the report back to the channel
+    # await client.send_message(event.chat_id, response_message)
 
-# Start the client asynchronously
-print("Bot is running...")
-client.start()
+# Start the client asynchronously (login with phone number the first time)
+print("User is running...")
 
-# Run the client until disconnected
-client.run_until_disconnected()
+async def main():
+    await client.start(phone_number)  # Will prompt for code the first time
+    print("Logged in successfully!")
+    await client.run_until_disconnected()
+
+client.loop.run_until_complete(main())
