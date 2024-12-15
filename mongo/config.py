@@ -1,10 +1,11 @@
-from mongoengine import connect
+from pymongo import MongoClient
 from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
-# Use the MongoDB Atlas connection string
-print(os.getenv('MONGO_URI'))
+# Connect to MongoDB (local instance)
+client = MongoClient(os.getenv('MONGO_URI'))
 
-# Connect to MongoDB
-connect(host=os.getenv('MONGO_URI'), db=scams)
+# Access a database
+db = client['scams']

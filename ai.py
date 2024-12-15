@@ -13,19 +13,41 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 groq_api_url = "https://api.groq.com/openai/v1/chat/completions"
 
 def spam_report(message):
-    # Define the prompt for scam detection
+    # Define the prompt for scam detection with a scam score request
     prompt = f"""
-    Please analyze the following message for signs of investment scams. Look for the following red flags:
-    1. **Promises of guaranteed returns** or any language suggesting risk-free investments.
-    2. **Urgency tactics**, such as "limited time offer" or "act fast" or phrases that push people to invest quickly without due diligence.
-    3. **Suspicious links**: Any links that may lead to untrusted websites or have a shady appearance.
-    4. **Fake testimonials**: Claims like "many people have already made huge profits" or "everyone is investing".
-    5. **Exaggerated language**: Words like "huge returns", "get rich quick", "too good to miss", etc.
+    Please analyze the following message for signs of investment scams. Identify specific words or phrases that fall under the following red flags:
 
-    Please analyze the message and report if any of the above red flags are found. If a scam is detected, return "Yes" and explain which red flags were found. If the message is not a scam, return "No" with a brief explanation. Return the results as a structured JSON format.
+    1. **Promises of guaranteed returns**: Look for language like "guaranteed returns", "risk-free", or similar phrases suggesting no risk or certain profit.
+    2. **Urgency tactics**: Identify phrases such as "limited time offer", "act fast", "hurry", or anything that creates pressure to invest quickly.
+    3. **Suspicious links**: Highlight any links that may lead to untrusted websites or have a shady appearance (e.g., unusual domains, misspellings, or excessive tracking parameters).
+    4. **Fake testimonials**: Find claims like "many people have already made huge profits", "everyone is investing", or other phrases implying unverified success stories.
+    5. **Exaggerated language**: Identify words or phrases like "huge returns", "get rich quick", "life-changing opportunity", "too good to miss", etc.
+
+    For each identified red flag, please provide:
+    - A clear indication of whether a red flag was found ("true" or "false").
+    - A list of specific red flags detected along with the exact words or phrases triggering them.
+    - A brief explanation of why each identified phrase is considered a red flag.
+
+    Additionally, please calculate a **scam score out of 100** based on the number and severity of identified red flags:
+    - Assign points for each type of red flag found (e.g., minor flags could add fewer points, while major flags could add more).
+    - Provide a brief rationale for the assigned score.
+
+    If no red flags are found, return "false" with a brief explanation of why the message does not contain any concerning elements.
+
+    Return the results in a structured JSON format with the following keys:
+    - "red_flag_found": Boolean
+    - "details": List of objects containing:
+        - "red_flag": The type of red flag detected
+        - "phrase": The exact phrase found
+        - "explanation": Why this phrase is a concern
+    - "scam_score": Integer (0-100)
+    - "score_explanation": String explaining how the score was derived.
 
     Message: {message}
-    """
+"""
+
+
+
 
     # Create the request payload
     payload = {
@@ -53,14 +75,19 @@ def spam_report(message):
         # Remove markdown code block formatting
         if response_text.startswith("```json") and response_text.endswith("```"):
             response_text = response_text[7:-3].strip()  # Strip out "```json" at the start and "```" at the end
-
+        
+        elif response_text.startswith("```") and response_text.endswith("```"):
+            response_text = response_text[4:-3].strip()
+            
+        print(response_text)
         # Try to parse the response text as JSON
         try:
             structured_response = json.loads(response_text)
             return structured_response
         except json.JSONDecodeError:
             print("The response text is not in valid JSON format.")
-            print("Response Text:", response_text)  # Print the response for debugging
+            print("Response Text:")
+            print(response_text)  # Print the response for debugging
             return None
     else:
         print(f"Error: {response.status_code} - {response.text}")

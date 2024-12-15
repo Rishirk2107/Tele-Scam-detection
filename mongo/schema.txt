@@ -1,0 +1,23 @@
+mongo hierarchy:
+
+scams under channel:
+-channel_id
+-scams
+-scammer
+-scam types
+-links
+
+scams of channels:
+-credibility scores
+-count of scams
+-activity Metrics
+-Engagement Metrics
+-Content Score
+-Behavioral Score
+credability score= 100-(w1.A+w2.E+w3.C+w4.B)
+weights=0.4, 0.3, 0.2, 0.1
+
+scams of user(scammers):
+-scams per user
+-scams:[]
+-scam links and credibility

@@ -3,6 +3,9 @@ from ai import spam_report
 from dotenv import load_dotenv
 import os
 
+from mongo.channel import insert_scam
+from mongo.user import ins_upt_user
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -24,6 +27,8 @@ async def message_handler(event):
 
     # Try to get the sender details
     sender = await event.get_sender()
+    
+    channel_id= event.chat.username
 
     # Check if the sender is a User or Channel
     if hasattr(sender, 'first_name'):  # Sender is a User
@@ -39,19 +44,28 @@ async def message_handler(event):
 
     # Generate spam report
     report = spam_report(message)
-    print(report)
+    # print(report)
+    # print(report["red_flag_found"])
 
     # Prepare the spam report message
-    # response_message = (
-    #     f"\ud83d\udd12 **Spam Report** \ud83d\udd12\n\n"
-    #     f"**Message:** {message}\n"
-    #     f"**Sender Name:** {sender_name}\n"
-    #     f"**Sender Username:** @{sender_username}\n"
-    #     f"**Sender ID:** {sender_id}\n"
-    #     f"**Sender Type:** {sender_type}\n"
-    #     f"**Channel:** {event.chat.title}\n\n"
-    #     f"**Spam Analysis:** {report}"
-    # )
+    response_message = (
+        f" **Spam Report** \n\n"
+        f"**Message:** {message}\n"
+        f"**Sender Name:** {sender_name}\n"
+        f"**Sender Username:** @{sender_username}\n"
+        f"**Sender ID:** {sender_id}\n"
+        f"**Sender Type:** {sender_type}\n"
+        f"**Channel:** {event.chat.title}\n\n"
+        f"**Spam Analysis:** {report}"
+        f"**Channel id:** {channel_id}"
+        
+    )
+    
+    report["channel_id"]=channel_id
+    report["username"]=sender_username
+    
+    insert_scam(report)
+    ins_upt_user(report)
 
     # # Send the report back to the channel
     # await client.send_message(event.chat_id, response_message)
