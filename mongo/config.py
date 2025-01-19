@@ -8,4 +8,4 @@ load_dotenv()
 client = MongoClient(os.getenv('MONGO_URI'))
 
 # Access a database
-db = client['scams']
+db = client['tnpolice']

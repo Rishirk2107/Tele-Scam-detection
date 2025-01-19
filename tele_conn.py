@@ -3,8 +3,10 @@ from ai import spam_report
 from dotenv import load_dotenv
 import os
 
-from mongo.channel import insert_scam
+from mongo.messages import insert_scam
 from mongo.user import ins_upt_user
+from mongo.channels import ch_inp
+from mongo.scam import ins_upt_scam
 
 # Load environment variables from .env file
 load_dotenv()
@@ -27,8 +29,10 @@ async def message_handler(event):
 
     # Try to get the sender details
     sender = await event.get_sender()
-    
     channel_id= event.chat.username
+    message_timestamp = event.message.date  # This is a datetime object
+    # Format the timestamp (optional)
+    formatted_timestamp = message_timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
     # Check if the sender is a User or Channel
     if hasattr(sender, 'first_name'):  # Sender is a User
@@ -60,13 +64,16 @@ async def message_handler(event):
         f"**Channel id:** {channel_id}"
         
     )
+    report['timestamp'] = formatted_timestamp
     report['message']=message
     report["channel_id"]=channel_id
     report["username"]=sender_username
+    report["channel_name"]=event.chat.title
     
     insert_scam(report)
     ins_upt_user(report)
-
+    ch_inp(report)
+    ins_upt_scam(report)
     # # Send the report back to the channel
     # await client.send_message(event.chat_id, response_message)
 

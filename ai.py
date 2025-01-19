@@ -13,41 +13,46 @@ groq_api_key = os.getenv("GROQ_API_KEY")
 groq_api_url = "https://api.groq.com/openai/v1/chat/completions"
 
 def spam_report(message):
+    print(message)
     # Define the prompt for scam detection with a scam score request
-    prompt = f"""
-    Please analyze the following message for signs of investment scams. Identify specific words or phrases that fall under the following red flags:
+        prompt = f"""
+        Please analyze the following message for signs of scams, specifically targeting the following categories:
+        
+        **Cryptocurrency scams**:
+        - **Initial Coin Offerings (ICO)**: Look for promises of revolutionary technology, high returns, or vague descriptions of utility.
+        - **Phishing**: Identify fake links or emails claiming to be from wallets or exchanges asking for personal information.
+        - **Ponzi schemes**: Highlight claims like "earn by recruiting others" or offers of consistent, unrealistic returns.
 
-    1. **Promises of guaranteed returns**: Look for language like "guaranteed returns", "risk-free", or similar phrases suggesting no risk or certain profit.
-    2. **Urgency tactics**: Identify phrases such as "limited time offer", "act fast", "hurry", or anything that creates pressure to invest quickly.
-    3. **Suspicious links**: Highlight any links that may lead to untrusted websites or have a shady appearance (e.g., unusual domains, misspellings, or excessive tracking parameters).
-    4. **Fake testimonials**: Find claims like "many people have already made huge profits", "everyone is investing", or other phrases implying unverified success stories.
-    5. **Exaggerated language**: Identify words or phrases like "huge returns", "get rich quick", "life-changing opportunity", "too good to miss", etc.
+        **Stock market manipulation**:
+        - **Pump and dump schemes**: Look for language like "buy now before it skyrockets" or specific stock tickers promoted aggressively.
+        - **Insider trading pitches**: Spot claims such as "exclusive stock tips" or "insider knowledge".
 
-    For each identified red flag, please provide:
-    - A clear indication of whether a red flag was found ("true" or "false").
-    - A list of specific red flags detected along with the exact words or phrases triggering them.
-    - A brief explanation of why each identified phrase is considered a red flag.
+        **Forex scams**:
+        - **Unregulated brokers**: Identify promises of easy trading, huge leverage, or guarantees of high profits.
+        - **Fake platforms**: Spot offers of "automated trading" with unverifiable results or phrases like "start with just $100 and double your money in a day."
 
-    Additionally, please calculate a **scam score out of 100** based on the number and severity of identified red flags:
-    - Assign points for each type of red flag found (e.g., minor flags could add fewer points, while major flags could add more).
-    - Provide a brief rationale for the assigned score.
+        For each identified red flag, please provide:
+        - A clear indication of whether a red flag was found ("true" or "false").
+        - A list of specific red flags detected along with the exact words or phrases triggering them.
+        - A brief explanation of why each identified phrase is considered a red flag.
 
-    If no red flags are found, return "false" with a brief explanation of why the message does not contain any concerning elements.
+        Additionally, please calculate a **scam score out of 100** based on the number and severity of identified red flags:
+        - Assign points for each type of red flag found (e.g., minor flags could add fewer points, while major flags could add more).
+        - Provide a brief rationale for the assigned score.
 
-    Return the results in a structured JSON format with the following keys:
-    - "red_flag_found": Boolean
-    - "details": List of objects containing:
-        - "red_flag": The type of red flag detected
-        - "phrase": The exact phrase found
-        - "explanation": Why this phrase is a concern
-    - "scam_score": Integer (0-100)
-    - "score_explanation": String explaining how the score was derived.
+        If no red flags are found, return "false" with a brief explanation of why the message does not contain any concerning elements.
 
-    Message: {message}
-"""
+        Return the results in a structured JSON format with the following keys:
+        - "red_flag_found": Boolean
+        - "details": List of objects containing:
+            - "red_flag": The type of red flag detected (Initial Coin Offerings (ICO) / Phishing / Ponzi schemes / Pump and dump schemes / Insider trading pitches / Unregulated brokers / Fake platforms)
+            - "phrase": The exact phrase found
+            - "explanation": Why this phrase is a concern
+        - "scam_score": Integer (0-100)
+        - "score_explanation": String explaining how the score was derived.
 
-
-
+        Message: {message}
+    """
 
     # Create the request payload
     payload = {
