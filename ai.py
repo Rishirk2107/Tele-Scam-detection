@@ -15,7 +15,7 @@ groq_api_url = "https://api.groq.com/openai/v1/chat/completions"
 def spam_report(message):
     print(message)
     # Define the prompt for scam detection with a scam score request
-        prompt = f"""
+    prompt = f"""
         Please analyze the following message for signs of scams, specifically targeting the following categories:
         
         **Cryptocurrency scams**:
@@ -48,6 +48,7 @@ def spam_report(message):
             - "red_flag": The type of red flag detected (Initial Coin Offerings (ICO) / Phishing / Ponzi schemes / Pump and dump schemes / Insider trading pitches / Unregulated brokers / Fake platforms)
             - "phrase": The exact phrase found
             - "explanation": Why this phrase is a concern
+        - "links" : if links which present in the message else empty array []
         - "scam_score": Integer (0-100)
         - "score_explanation": String explaining how the score was derived.
 
