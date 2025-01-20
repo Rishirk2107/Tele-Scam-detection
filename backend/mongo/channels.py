@@ -18,7 +18,7 @@ def ch_inp(details):
         collection.insert_one(ch_data)
     else:
         updated_score = (channel["scam_score"]+details["scam_score"]) / 2
-        if(updated_score>30):
+        if(updated_score>5):
             collection.update_one(
                 {"channel_id":details["channel_id"]},
                 {
