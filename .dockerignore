@@ -1,6 +1,0 @@
-/venv
-.env
-__pycache__
-/bot_session.session
-/user_session.session
-/user_session.session-journal
