@@ -12,18 +12,17 @@ def ins_upt_scam(details):
         existing_type = collection.find_one({"type": scam_type})
 
         if existing_type is None:
-            # If the type doesn't exist, insert a new document
             collection.insert_one({
                 "type": scam_type,
-                "channels": [channel_id],  # Initialize with the current channel_id
-                "users": [username]       # Initialize with the current username
+                "channels": [channel_id],  
+                "users": [username]       
             })
         else:
             # If the type exists, update the existing document
             collection.update_one(
-                {"type": scam_type},  # Find the document for this scam type
+                {"type": scam_type}, 
                 {
-                    "$addToSet": {  # Add to set to prevent duplicates
+                    "$addToSet": {
                         "channels": channel_id,
                         "users": username
                     }
