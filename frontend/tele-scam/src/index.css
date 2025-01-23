@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* General Dashboard Styling */
+.dashboard-container {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  color: #ffffff;
+}
+
+/* Header */
+.header-container {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.logo-avatar {
+  width: 100px;
+  height: 100px;
+  margin: 0 auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+.header-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #38bdf8;
+}
+
+/* Cards */
+.cards-container {
+  margin-top: 2rem;
+}
+.info-card {
+  border-radius: 15px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.info-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.card-text {
+  margin-top: 0.5rem;
+  font-size: 1rem;
+  color: #cbd5e1;
+}
+.card-flagged {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+}
+.card-safe {
+  background: linear-gradient(135deg, #22c55e, #15803d);
+}
+.status-chip {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Charts */
+.chart-container {
+  margin-top: 3rem;
+}
+.chart-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #38bdf8;
+}
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  .header-title {
+    font-size: 2rem;
+  }
+  .info-card {
+    padding: 0.5rem;
+  }
+}
