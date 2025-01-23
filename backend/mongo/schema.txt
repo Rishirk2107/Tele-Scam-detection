@@ -1,23 +1,43 @@
-mongo hierarchy:
+messages:
 
-scams under channel:
--channel_id
--scams
--scammer
--scam types
--links
+red_flag_found:boolean
+details:[
+    {
+        red_flag:string
+        phase:string
+        explanation:string
+    }
+]
+links=[string]
+scam_score:int
+score_explanation:string
+timestamp:date
+message:string
+channel_id:string
+username:string
+channel_name:string
 
-scams of channels:
--credibility scores
--count of scams
--activity Metrics
--Engagement Metrics
--Content Score
--Behavioral Score
-credability score= 100-(w1.A+w2.E+w3.C+w4.B)
-weights=0.4, 0.3, 0.2, 0.1
+channels:
 
-scams of user(scammers):
--scams per user
--scams:[]
--scam links and credibility
+channel_id:string
+channel_name:strinf
+flag:boolean
+victim_reports:[]
+username:[string]
+scam_score:num
+red_flag:[string]
+
+scam:
+
+type:string
+channels:[string]
+users:[string]
+
+user:
+
+username:string
+scam_channels:[string]
+flag:boolean 
+scam_score:num
+victim_reports:[]
+red_flag:[string]
