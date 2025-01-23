@@ -1,0 +1,6 @@
+requests
+python-dotenv
+telethon
+pymongo
+fastapi
+uvicorn
