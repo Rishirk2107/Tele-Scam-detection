@@ -1,0 +1,15 @@
+:root {
+    --lightBg: #f9f9f9;
+    --darkBg: #212121;
+    --textLight: #ffffff;
+    --textDark: #212121;
+  }
+  .dark {
+    background-color: var(--darkBg);
+    color: var(--textLight);
+  }
+  .light {
+    background-color: var(--lightBg);
+    color: var(--textDark);
+  }
+  
