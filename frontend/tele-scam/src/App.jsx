@@ -1,6 +1,6 @@
 
 import { CssBaseline, Container } from "@mui/material";
-import Dashboard from "./components/dashboard";
+import Dashboard from "./dashboard";
 
 const App = () => {
   return (
