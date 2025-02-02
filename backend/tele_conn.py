@@ -16,22 +16,28 @@ api_id = int(os.getenv('API_ID'))  # Ensure the ID is an integer
 api_hash = os.getenv('API_HASH')
 phone_number = os.getenv('PHONE_NUMBER')  # Add your phone number here
 
-# Channel list
-channels = ['summa121','hahahascambot','the_trading_advisor_stock','tradelikebarlin','nifty_50_stockspro','Intraday_Banknifty_Calls','Account_handel','mehtaisbackofficial_0','UshasAnalysis0','account_handling_stock','stockpro_online']
-
 # Create a TelegramClient instance for the user account (not a bot)
 client = TelegramClient('user_session', api_id, api_hash)
 
-@client.on(events.NewMessage(chats=channels))  # This listens to messages from multiple channels
+async def get_user_channels():
+    """Fetch all channels the user is a member of and return a list of their usernames."""
+    dialogs = await client.get_dialogs()
+    channels = [dialog.entity for dialog in dialogs if dialog.is_channel]
+    
+    # Extract channel usernames
+    channel_usernames = [channel.username for channel in channels if channel.username]
+    
+    return channel_usernames
+
+@client.on(events.NewMessage())  # Listens to all new messages
 async def message_handler(event):
     # Get the message text
     message = event.message.message
 
     # Try to get the sender details
     sender = await event.get_sender()
-    channel_id= event.chat.username
+    channel_id = event.chat.username
     message_timestamp = event.message.date  # This is a datetime object
-    # Format the timestamp (optional)
     formatted_timestamp = message_timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
     # Check if the sender is a User or Channel
@@ -48,8 +54,6 @@ async def message_handler(event):
 
     # Generate spam report
     report = spam_report(message)
-    # print(report)
-    # print(report["red_flag_found"])
 
     # Prepare the spam report message
     response_message = (
@@ -60,29 +64,36 @@ async def message_handler(event):
         f"**Sender ID:** {sender_id}\n"
         f"**Sender Type:** {sender_type}\n"
         f"**Channel:** {event.chat.title}\n\n"
-        f"**Spam Analysis:** {report}"
-        f"**Channel id:** {channel_id}"
-        
+        f"**Spam Analysis:** {report}\n"
+        f"**Channel ID:** {channel_id}"
     )
+
+    # Store data in MongoDB
     report['timestamp'] = formatted_timestamp
-    report['message']=message
-    report["channel_id"]=channel_id
-    report["username"]=sender_username
-    report["channel_name"]=event.chat.title
-    
+    report['message'] = message
+    report["channel_id"] = channel_id
+    report["username"] = sender_username
+    report["channel_name"] = event.chat.title
+
     insert_scam(report)
     ins_upt_user(report)
     ch_inp(report)
     ins_upt_scam(report)
-    # # Send the report back to the channel
-    # await client.send_message(event.chat_id, response_message)
-
-# Start the client asynchronously (login with phone number the first time)
-print("User is running...")
 
 async def main():
+    """Start the Telegram client and fetch channels dynamically."""
     await client.start(phone_number)  # Will prompt for code the first time
     print("Logged in successfully!")
+
+    # Fetch user's joined channels dynamically
+    channels = await get_user_channels()
+    
+    print(f"Monitoring {len(channels)} channels: {channels}")
+
+    # Add event listener for only these channels
+    client.add_event_handler(message_handler, events.NewMessage(chats=channels))
+
     await client.run_until_disconnected()
 
+print("User is running...")
 client.loop.run_until_complete(main())
