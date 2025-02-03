@@ -86,3 +86,31 @@
     padding: 0.5rem;
   }
 }
+/* src/styles.css or src/global.css */
+.bg-cardLight {
+  background-color: #f0f4f8;
+}
+
+.bg-cardDark {
+  background-color: #2c2f36;
+}
+
+.shadow-xl {
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.rounded-lg {
+  border-radius: 12px;
+}
+
+.text-primary {
+  color: #007bff;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}

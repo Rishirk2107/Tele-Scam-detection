@@ -37,4 +37,8 @@ async def get_items1():
             "$sort": { "date": -1 }  # Sort by date (newest first)
         }
     ]
+<<<<<<< HEAD
     return list(db.messages.aggregate(pipeline))
+=======
+    return list(db.messages.aggregate(pipeline))    
+>>>>>>> 93168acea84bc622f9f1e0910f88fd4fb2971914

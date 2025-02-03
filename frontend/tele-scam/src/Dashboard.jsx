@@ -1,14 +1,20 @@
 import { useState, useEffect } from "react";
-import { Box, Container } from "@mui/material";
+import { Box, Container, Paper } from "@mui/material";
 import Header from "./components/Header";
 import SummaryCards from "./components/SummaryCards";
 import DataVisualization from "./components/DataVisualization";
-import DetailsTable from "./components/DetailsTable";
 import SnackbarNotification from "./components/SnackbarNotification";
-import { fetchOverviewData, fetchScamTypes, fetchMessageAnalysis, fetchScamGrowthData, fetchScammersData, fetchChannelsData } from "./api/api";
+import {
+  fetchOverviewData,
+  fetchScamTypes,
+  fetchMessageAnalysis,
+  fetchTopScamGrowthData,
+  fetchScammersData,
+  fetchChannelsData,
+} from "./api/api";
 import "./styles/theme.css";
 
-const Dashboard = () => {
+const Dashboard = ({ setScammersData, setChannelsData }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [overviewData, setOverviewData] = useState({
@@ -19,11 +25,8 @@ const Dashboard = () => {
   });
   const [topScams, setTopScams] = useState([]);
   const [scamTypesData, setScamTypesData] = useState([]);
-  const [scamTrendsData, setScamTrendsData] = useState([]);
   const [data, setData] = useState([]);
-  const [scamGrowthData, setScamGrowthData] = useState([]);
-  const [scammersData, setScammersData] = useState([]);
-  const [channelsData, setChannelsData] = useState([]);
+  const [topScamGrowthData, setTopScamGrowthData] = useState([]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode);
@@ -40,63 +43,67 @@ const Dashboard = () => {
           totalChannelsAnalyzed: overview.total_channels_analyzed,
           totalScamChannelsDetected: overview.total_scam_channels_detected,
         });
-        const sortedScams = (overview.total_scams || [])
-        .sort((a, b) => b.count - a.count) // Sort in descending order by count
-        .slice(0, 5); // Take the top 5 scams
 
-      setTopScams(sortedScams);
+        const sortedScams = (overview.total_scams || []).sort((a, b) => b.count - a.count).slice(0, 6);
+        setTopScams(sortedScams);
 
-      const scamTypes = await fetchScamTypes();
-      setScamTypesData(scamTypes);
+        const scamTypes = await fetchScamTypes();
+        setScamTypesData(scamTypes);
 
-      const scamGrowthData = await fetchScamGrowthData(
-        sortedScams.map((scam) => scam.name)
-      );
-      setScamGrowthData(scamGrowthData);
+        const allGrowthData = await fetchTopScamGrowthData();
+        const topScamNames = sortedScams.map((scam) => scam._id);
+        const topScamGrowthData = allGrowthData.filter((data) => topScamNames.includes(data.scam_type));
+        setTopScamGrowthData(topScamGrowthData);
 
-      const messageAnalysis = await fetchMessageAnalysis();
-      const formattedData = messageAnalysis.map((item) => ({
-        name: item.date,
-        totalMessages: item.no_of_messages,
-        scamMessages: item.scam_messages,
-      }));
-      setData(formattedData);
+        const messageAnalysis = await fetchMessageAnalysis();
+        setData(messageAnalysis.map((item) => ({ name: item.date, totalMessages: item.no_of_messages, scamMessages: item.scam_messages })));
 
-      const scammersData = await fetchScammersData();
-      console.log(scammersData)
-      setScammersData(scammersData);
+        const scammersDataResponse = await fetchScammersData();
+        setScammersData(scammersDataResponse);
 
-      const channelData = await fetchChannelsData();
-      setChannelsData(channelData);
-
-    } catch(error){
-      console.error("Error fetching data:", error);
-    }
-  }; fetchData();
-}, []);
+        const channelsDataResponse = await fetchChannelsData();
+        setChannelsData(channelsDataResponse);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
   const handleCloseSnackbar = () => setOpenSnackbar(false);
 
   return (
-    <Box className={`min-h-screen transition-colors duration-500 ${isDarkMode ? "bg-darkBg text-textLight" : "bg-lightBg text-textDark"}`}>
+    <Box className={`min-h-screen transition-colors duration-500 ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"}`}>
       <SnackbarNotification open={openSnackbar} onClose={handleCloseSnackbar} />
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
-      <Container className="main-container py-8">
-        <SummaryCards overviewData={overviewData} topScams={topScams} />
-        <DataVisualization
-          scamTypesData={scamTypesData}
-          scamGrowthData={scamGrowthData}
-          data={data}
-        />
-        <DetailsTable
-          scammersData={scammersData}
-          channelsData={channelsData}
-        />
+      <Container className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8" component="main">
+        {/* Summary Cards with Glassmorphism Effect */}
+        <Paper
+          elevation={3}
+          className={`col-span-12 lg:col-span-12 p-6 rounded-lg shadow-lg ${
+            isDarkMode
+              ? "bg-gradient-to-br from-gray-800 to-gray-900 backdrop-blur-md bg-opacity-80 border border-gray-700"
+              : "bg-gradient-to-br from-white to-gray-50 backdrop-blur-md bg-opacity-80 border border-gray-200"
+          }`}
+        >
+          <SummaryCards overviewData={overviewData} topScams={topScams} isDarkMode={isDarkMode} />
+        </Paper>
+
+        {/* Data Visualization with Enhanced Charts */}
+        <Paper
+          elevation={3}
+          className={`col-span-12 lg:col-span-8 p-6 rounded-lg shadow-lg ${
+            isDarkMode
+              ? "bg-gradient-to-br from-gray-800 to-gray-900 backdrop-blur-md bg-opacity-80 border border-gray-700"
+              : "bg-gradient-to-br from-white to-gray-50 backdrop-blur-md bg-opacity-80 border border-gray-200"
+          }`}
+        >
+          <DataVisualization scamTypesData={scamTypesData} topScamGrowthData={topScamGrowthData} data={data} isDarkMode={isDarkMode} />
+        </Paper>
       </Container>
     </Box>
   );
 };
 
 export default Dashboard;
-

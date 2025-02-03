@@ -1,54 +1,63 @@
-import React, { useState, useEffect } from "react";
-import { Container, Avatar, Typography, IconButton } from "@mui/material";
-import { BiMoon, BiSun } from "react-icons/bi";
+import React from "react";
+import { Container, Avatar, Typography, Box } from "@mui/material";
 import tnPoliceLogo from "../assets/tn-police-logo.jpeg";
 
 const Header = () => {
-  const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
-
-  // Update the theme in localStorage and the document root element
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDarkMode) {
-      root.classList.add("dark");
-      localStorage.setItem("theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDarkMode]);
-
-  // Function to toggle the theme
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
-
   return (
     <Container
       sx={{
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "center",
-        padding: "16px 24px",
-        borderBottom: "1px solid",
-        borderColor: isDarkMode ? "#4a4a4a" : "#e0e0e0",
-        backgroundColor: isDarkMode ? "#212121" : "#fff",
+        padding: "20px 24px",
+        borderBottom: "2px solid #d1d5db",
+        background: "linear-gradient(90deg, #0f172a, #1e40af, #2563eb)",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.25)", // Elevated shadow
+        borderRadius: "12px", // Adds roundness to the container
+        marginBottom: "20px", // Creates spacing below the header
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <Avatar src={tnPoliceLogo} alt="Logo" sx={{ width: 64, height: 64 }} />
-        <Typography
-          variant="h3"
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "24px", // Balanced gap for spacing
+          justifyContent: "center",
+          flexDirection: "row",
+        }}
+      >
+        <Avatar
+          src={tnPoliceLogo}
+          alt="Logo"
           sx={{
-            fontSize: "1.5rem",
-            fontWeight: "bold",
-            color: isDarkMode ? "#ffffff" : "#212121",
+            width: 100,
+            height: 100,
+            borderRadius: "50%", // Perfectly circular avatar
+            border: "4px solid #ffffff", // Contrasting white border
+            boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)", // Shadow for a standout look
+            transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out", // Smooth animations
+            "&:hover": {
+              transform: "scale(1.1)", // Slight scaling on hover
+              boxShadow: "0 8px 16px rgba(0, 0, 0, 0.4)", // Stronger shadow on hover
+            },
+          }}
+        />
+        <Typography
+          variant="h4"
+          sx={{
+            fontSize: "2rem",
+            fontWeight: "800", // Extra bold for emphasis
+            color: "white", // White text color
+            textAlign: "center",
+            letterSpacing: "1.5px",
+            textTransform: "uppercase",
+            textShadow: "1px 1px 6px rgba(0, 0, 0, 0.5)", // Enhanced shadow for depth
+            animation: "glow 3s ease-in-out infinite", // Subtle glowing animation
           }}
         >
           TeleScam Analysis Dashboard
         </Typography>
-      </div>
-      <IconButton onClick={toggleTheme}>
-        {isDarkMode ? <BiSun size={28} /> : <BiMoon size={28} />}
-      </IconButton>
+      </Box>
     </Container>
   );
 };

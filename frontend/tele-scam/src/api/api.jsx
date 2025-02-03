@@ -10,8 +10,9 @@ export const fetchScamTypes = async () =>{
   return (await response).data;
 } 
 
-export const fetchScamGrowthData = async () => {
-    const response = axios.get("http://18.60.211.200:8000/api/scam-trends");
+
+export const fetchTopScamGrowthData = async () => {
+    const response = axios.get("http://18.60.211.200:8000/api/top_scam_growth");
     return (await response).data;
 }
 
