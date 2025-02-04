@@ -2,7 +2,7 @@ import { Grid, Card, CardContent, Typography, Avatar, Box, Container, Chip } fro
 import { BiBarChart, BiError, BiCheck } from "react-icons/bi";
 import SecurityIcon from "@mui/icons-material/Security"; // Import for SecurityIcon
 import FlagIcon from "@mui/icons-material/Flag"; // Import for FlagIcon (for scam flags)
-
+import PhishingIcon from "@mui/icons-material/Phishing";
 const SummaryCards = ({ overviewData, topScams }) => (
   <Container className="main-container grid grid-cols-1 md:grid-cols-12 gap-4 py-8">
     {/* Left Panel: Summary */}<br></br>
@@ -11,22 +11,22 @@ const SummaryCards = ({ overviewData, topScams }) => (
   variant="h5" 
   className="text-4xl font-extrabold text-center mb-8"
   sx={{
-    fontSize: '2.25rem', // Slightly reduced font size for balance
-    fontWeight: 'bold', // Simplified bold styling
+    fontSize: '2.25rem', 
+    fontWeight: 'bold', 
     textAlign: 'center',
     textTransform: 'uppercase',
     letterSpacing: '1.75px',
     padding: '15px 30px',
-    background: 'linear-gradient(90deg, #4CAF50 0%, #E53935 100%)', // Enhanced gradient for depth
-    borderRadius: '16px', // More rounded corners
-    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)', // Deeper shadow for emphasis
-    color: '#FFFFFF', // Solid text color
-    fontFamily: '"Roboto", sans-serif',
-    border: 'none', // Removed border for a cleaner look
-    textShadow: '1px 1px 3px rgba(0, 0, 0, 0.3)', // Improved text shadow
+    background: 'linear-gradient(90deg, #E53935 0%, #1976D2 100%)', 
+    borderRadius: '16px', 
+    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)', 
+    color: 'black', 
+    fontFamily: 'courier-new',
+    border: 'none',
+    textShadow: '1px 1px 3px rgba(0, 0, 0, 0.3)', 
   }}
 >
-  Summary Overview
+  Real-Time Overview
 </Typography><br></br>
 
       <Grid container spacing={4} justifyContent="space-between">
@@ -178,7 +178,7 @@ const SummaryCards = ({ overviewData, topScams }) => (
                       icon={<FlagIcon />}
                       sx={{
                         mt: 2,
-                        backgroundColor: "#00796B", // Replaced yellow with teal
+                        backgroundColor: "#000080", // Replaced yellow with teal
                         color: "#fff",
                         fontWeight: "bold",
                         fontSize: "1rem",
@@ -186,8 +186,8 @@ const SummaryCards = ({ overviewData, topScams }) => (
                       }}
                     />
                     <Box sx={{ mt: 2, display: "flex", alignItems: "center" }}>
-                      <FlagIcon sx={{ marginRight: "8px", color: "#00796B", fontSize: "1.5rem" }} />
-                      <Typography variant="body2" sx={{ color: "#00796B", fontWeight: "bold" }}>
+                      <FlagIcon sx={{ marginRight: "8px", color: "red", fontSize: "1.5rem" }} />
+                      <Typography variant="body2" sx={{ color: "#008080", fontWeight: "bold" }}>
                         High Priority
                       </Typography>
                     </Box>

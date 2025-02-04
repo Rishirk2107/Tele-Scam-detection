@@ -1,17 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; // Import the useNavigate hook
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import Toastify CSS
+import  { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { FaEye, FaEyeSlash, FaMoon, FaSun } from "react-icons/fa";
 
 const Login = ({ setIsLoggedIn }) => {
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if already logged in (based on localStorage)
+    document.body.style.overflow = "hidden"; // Disable scrolling
+    return () => {
+      document.body.style.overflow = "auto"; // Restore scrolling when unmounting
+    };
+  }, []);
+
+  useEffect(() => {
     if (localStorage.getItem("isLoggedIn") === "true") {
-      navigate("/dashboard"); // If logged in, navigate to dashboard
+      navigate("/dashboard");
     }
   }, [navigate]);
 
@@ -24,20 +33,23 @@ const Login = ({ setIsLoggedIn }) => {
     e.preventDefault();
     setErrorMessage("");
 
-    // Simulated login validation
     if (formData.username === "Tn-cyberwing-admin" && formData.password === "cybercrime@tn") {
       setIsLoggedIn(true);
-      localStorage.setItem("isLoggedIn", "true"); // Store login state in localStorage
-      toast.success("Login successful! Welcome to the dashboard!"); // Toast success message
-      navigate("/dashboard"); // Navigate to dashboard
+      localStorage.setItem("isLoggedIn", "true");
+      toast.success("Login successful! Welcome to the dashboard!");
+      navigate("/dashboard");
     } else {
       setErrorMessage("Invalid username or password.");
-      toast.error("Invalid username or password."); // Toast error message
+      toast.error("Invalid username or password.");
     }
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, backgroundColor: isDarkMode ? "#1a1a1a" : "#f4f4f4" }}>
+      <div style={styles.darkModeToggle} onClick={() => setIsDarkMode(!isDarkMode)}>
+        {isDarkMode ? <FaSun size={24} color="#ffcc00" /> : <FaMoon size={24} color="#ffffff" />}
+      </div>
+
       <div style={styles.loginContainer}>
         <div style={styles.leftSection}>
           <img
@@ -71,39 +83,66 @@ const Login = ({ setIsLoggedIn }) => {
               <label htmlFor="password" style={styles.label}>
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                style={styles.input}
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
+              <div style={styles.passwordWrapper}>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  style={styles.input}
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+                <span
+                  style={styles.eyeIcon}
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <FaEye /> : <FaEyeSlash />}
+                </span>
+              </div>
             </div>
             <button type="submit" style={styles.loginButton}>
               Login
             </button>
-            {errorMessage && (
-              <p style={styles.errorText}>{errorMessage}</p>
-            )}
+            {errorMessage && <p style={styles.errorText}>{errorMessage}</p>}
           </form>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
 
-// CSS Styles in a JS object
 const styles = {
   container: {
-    fontFamily: "'Inter', sans-serif",
+    fontFamily: "casteller",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    minHeight: "100vh",
-    background: "linear-gradient(135deg, #f5f5f5, #aec6ef)",
+    width: "100vw",
+    height: "100vh",
     overflow: "hidden",
+    transition: "background-color 0.3s ease",
+  },
+  darkModeToggle: {
+    width: "40px", // Set equal width and height
+    height: "40px",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex", 
+    borderRadius: "50%",
+    position: "absolute",
+    top: "20px",
+    right: "20px",
+    cursor: "pointer",
+    backgroundColor: "#333",
+    padding: "10px",
+    // borderRadius: "50%",
+    transition: "background 0.3s ease",
   },
   loginContainer: {
     display: "flex",
@@ -146,6 +185,7 @@ const styles = {
     padding: "40px",
     backgroundColor: "#ffffff",
     color: "#333333",
+    transition: "background-color 0.3s ease, color 0.3s ease",
   },
   heading: {
     textAlign: "center",
@@ -160,16 +200,29 @@ const styles = {
     marginBottom: "5px",
   },
   input: {
-    width: "95%",
+    width: "100%",
     padding: "10px",
     border: "1px solid #ccc",
     borderRadius: "4px",
     fontFamily: "'Inter', sans-serif",
+    paddingRight: "40px",
+  },
+  passwordWrapper: {
+    position: "relative",
+    display: "flex",
+    alignItems: "center",
+  },
+  eyeIcon: {
+    position: "absolute",
+    right: "10px",
+    cursor: "pointer",
+    fontSize: "18px",
+    color: "#666",
   },
   loginButton: {
     width: "100%",
     padding: "12px",
-    background: "linear-gradient(90deg, #ff9900, #ff7700)",
+    background: "linear-gradient(90deg, #0f172a, #1e40af, #2563eb)",
     border: "none",
     borderRadius: "25px",
     color: "#ffffff",

@@ -13,6 +13,7 @@ import {
   fetchChannelsData,
 } from "./api/api";
 import "./styles/theme.css";
+import { AiFillGoogleSquare } from "react-icons/ai";
 
 const Dashboard = ({ setScammersData, setChannelsData }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem("theme") === "dark");
@@ -51,10 +52,26 @@ const Dashboard = ({ setScammersData, setChannelsData }) => {
         setScamTypesData(scamTypes);
 
         const allGrowthData = await fetchTopScamGrowthData();
-        const topScamNames = sortedScams.map((scam) => scam._id);
+        const topScamNames = sortedScams.slice(0, 5).map((scam) => scam._id);
         const topScamGrowthData = allGrowthData.filter((data) => topScamNames.includes(data.scam_type));
-        setTopScamGrowthData(topScamGrowthData);
+        const uniqueDates = [...new Set(topScamGrowthData.map((entry) => entry.date))].sort();
 
+// Extract unique scam types
+const topScamTypes = [...new Set(topScamGrowthData.map((entry) => entry.scam_type))];
+const processedScamGrowthData = uniqueDates.map((date) => {
+  let entry = { date };
+
+  // Populate each scam's count for the given date
+  topScamTypes.forEach((scamType) => {
+    const scamEntry = topScamGrowthData.find(
+      (data) => data.date === date && data.scam_type === scamType
+    );
+    entry[scamType] = scamEntry ? scamEntry.count : 0; // Assign 0 if no data available
+  });
+
+  return entry;
+});
+        setTopScamGrowthData(processedScamGrowthData);
         const messageAnalysis = await fetchMessageAnalysis();
         setData(messageAnalysis.map((item) => ({ name: item.date, totalMessages: item.no_of_messages, scamMessages: item.scam_messages })));
 
@@ -74,7 +91,7 @@ const Dashboard = ({ setScammersData, setChannelsData }) => {
   const handleCloseSnackbar = () => setOpenSnackbar(false);
 
   return (
-    <Box className={`min-h-screen transition-colors duration-500 ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"}`}>
+    <Box className={ `min-h-screen transition-colors duration-500 ${isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-800"}`}>
       <SnackbarNotification open={openSnackbar} onClose={handleCloseSnackbar} />
       <Header isDarkMode={isDarkMode} toggleTheme={toggleTheme} />
       <Container className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8" component="main">
