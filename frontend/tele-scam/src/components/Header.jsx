@@ -9,7 +9,7 @@ const Header = () => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "20px 24px",
+        padding: "18px 24px",
         borderBottom: "2px solid #d1d5db",
         background: "linear-gradient(90deg, #0f172a, #1e40af, #2563eb)",
         boxShadow: "0 4px 8px rgba(0, 0, 0, 0.25)", // Elevated shadow

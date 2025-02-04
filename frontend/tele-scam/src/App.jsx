@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   CssBaseline,
   Container,
-  ThemeProvider,
+  ThemeProvider,  
   createTheme,
   IconButton,
   Typography,
@@ -20,12 +20,12 @@ const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [scammersData, setScammersData] = useState([]);
   const [channelsData, setChannelsData] = useState([]);
-
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem("isLoggedIn");
     if (storedLoginStatus === "true") {
       setIsLoggedIn(true);
     }
+    console.log(isLoggedIn);
   }, []);
 
   const primaryColor = "#607D8B";
@@ -124,19 +124,19 @@ const ViewTableButton = ({ primaryColor }) => {
         variant="contained"
         onClick={() => navigate("/tables")}
         sx={{
-          backgroundColor: primaryColor,
+          backgroundColor: "#000080",
           padding: "12px 24px",
           fontWeight: "bold",
           borderRadius: "8px",
           textTransform: "none",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
           "&:hover": {
-            backgroundColor: "#455A64",
+            backgroundColor: "#A52A2A",
             boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.3)",
           },
         }}
       >
-        View Table
+        View Detailed Scam Analysis
       </Button>
     </Box>
   );

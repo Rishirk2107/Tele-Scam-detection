@@ -22,20 +22,9 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#FF3333"];
     // Default to empty array if scamTypesData is undefined or null
   const safeScamTypesData = scamTypesData || [];
-
-  const processedScamGrowthData = topScamGrowthData.reduce((acc, entry) => {
-    const { date, scam_type, count } = entry;
-    const existing = acc.find((item) => item.date === date);
-
-    if (existing) {
-      existing[scam_type] = count;
-    } else {
-      acc.push({ date, [scam_type]: count });
-    }
-
-    return acc;
-  }, []);
-
+  const topScamGrowth = topScamGrowthData || [];
+  const scamTypes = Object.keys(topScamGrowthData[0] || {}).filter(key => key !== "date");
+  console.log(scamTypes)
   // Apex Pie Chart Configuration
   const pieOptions = {
     chart: {
@@ -205,21 +194,20 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
           <PolarAngleAxis
             dataKey="scam_type"
             tick={{
-              fill: "#333333",
+              fill: "#9A2A2A",
               fontSize: 12,
               fontWeight: 500,
-              fontFamily:"poppins",
               backgroundColor: "rgba(255, 255, 255, 0.8)",
               padding: "3px 6px ",
               borderRadius: "3px",
               border: "1px solid rgba(0, 0, 0, 0.2)",
-            }}
+            }} tickSize={10}
           />
           <PolarRadiusAxis tick={{ fill: "#fff", fontSize: 12 }} tickCount={6} stroke="#fff" />
           <Radar
             name="Scam Score"
             dataKey="count"
-            stroke="#FF5733"
+            stroke="#008080"
             fill="url(#radarGradient)"
             fillOpacity={0.85}
             strokeWidth={4}
@@ -349,7 +337,6 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
     </div>
   </Card>
 </Box>
-
 <br></br>
 <Grid item xs={12} direction="column" alignItems={"center"}>
   <Card className="relative p-8 shadow-3xl rounded-3xl border border-gray-500 overflow-hidden bg-gradient-to-br from-[#104f4f] via-[#0e678c] to-[#013d36]">
@@ -373,11 +360,10 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
     >
       Growth of Top 5 Scams
     </Typography>
-
     {/* Chart Container */}
     <ResponsiveContainer width="100%" height={400} className="relative z-10">
       <LineChart
-        data={processedScamGrowthData}
+        data={topScamGrowth.filter((_, index) => index % 2 === 0)}
         margin={{ top: 20, right: 40, left: 20, bottom: 30 }}
       >
         {/* Gradient for Line */}
@@ -391,29 +377,40 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
         {/* X-Axis with Black Text */}
         <XAxis
           dataKey="date"
-          tick={{ fill: "#000000", fontSize: 14, fontWeight: "bold" }}
-          axisLine={{ stroke: "#000000", strokeWidth: 2 }}
-          tickLine={{ stroke: "#000000", strokeWidth: 2 }}
+          tick={{ fill: "orange", fontSize: 14, fontWeight: "bold" }}
+          axisLine={{ stroke: "brown", strokeWidth: 2 }}
+          tickLine={{ stroke: "brown", strokeWidth: 2 }}
         />
 
         {/* Y-Axis with Black Text */}
         <YAxis
-          tick={{ fill: "#000000", fontSize: 14, fontWeight: "bold" }}
-          axisLine={{ stroke: "#000000", strokeWidth: 2 }}
-          tickLine={{ stroke: "#000000", strokeWidth: 2 }}
+          tick={{ fill: "orange", fontSize: 14, fontWeight: "bold" }}
+          axisLine={{ stroke: "brown", strokeWidth: 2 }}
+          tickLine={{ stroke: "brown", strokeWidth: 2 }}
         />
 
         {/* Tooltip with Black Text */}
         <Tooltip
-          contentStyle={{
-            backgroundColor: "#ffffff",
-            borderRadius: "10px",
-            color: "#000000",
-            border: "1px solid #000000",
-          }}
-          itemStyle={{ color: "#000000" }}
-          cursor={{ stroke: "#000000", strokeDasharray: "3 3" }}
-        />
+  contentStyle={{
+    backgroundColor: "#333", // Dark background for readability
+    color: "#fff", // White text
+    fontSize: "14px", // Set the font size
+    borderRadius: "10px", // Rounded corners for the tooltip
+    padding: "12px", // Add padding to prevent text from touching edges
+    border: "1px solid #ff6b35", // A light border color for contrast
+    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.3)", // Add a shadow for depth
+    transition: "all 0.3s ease", // Smooth transition when appearing/disappearing
+  }}
+  itemStyle={{
+    fontWeight: "bold", // Make the text bold for better emphasis
+    color: "#fff", // Set text color to white
+  }}
+  cursor={{
+    stroke: "#FF5733", // Change cursor color when hovering
+    strokeDasharray: "3 3", // Add dashes to the cursor
+  }}
+/>
+
 
         {/* Legend with Black Text */}
         <Legend
@@ -429,16 +426,15 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
         />
 
         {/* Animated Dynamic Lines for Each Scam Type */}
-        {[...new Set(topScamGrowthData.map((data) => data.scam_type))].map(
-          (scamType, index) => (
-            <Line
+        {/* {[...new Set(topScamGrowth.map((data) => data.scam_type))].map((scamType,index)=>( */}
+        {Object.keys(topScamGrowthData[0] || {})
+      .filter((key) => key !== "date") // Exclude the "date" key
+      .map((scamType, index) => (
+          <Line
               key={scamType}
               type="monotone"
-              dataKey="count"
-              data={topScamGrowthData.filter(
-                (entry) => entry.scam_type === scamType
-              )}
-              stroke="url(#lineGradient)"
+              dataKey={scamType} // Use the scam type as the dataKey
+              stroke={COLORS[index % COLORS.length]} // Assign a unique color
               strokeWidth={4}
               dot={{
                 r: 6,
@@ -456,13 +452,12 @@ const DataVisualization = ({ topScamGrowthData, scamTypesData, data }) => {
               animationDuration={1500} // Smooth animation effect
               animationEasing="ease-in-out" // Easing effect
             />
-          )
-        )}
+        ))}
       </LineChart>
     </ResponsiveContainer>
   </Card>
 </Grid>
-
+<br></br>
     </Container>
   );
 };
